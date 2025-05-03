@@ -10,8 +10,18 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  function alreadyExist() {
+    const names = persons.map(person => person.name.toLowerCase())
+    console.log("names",names)
+    return names.includes(newName.toLowerCase())
+  }
+
   const onSubmit = (event) => {
     event.preventDefault()
+    if(alreadyExist()) {
+      alert(`${newName} is already in the phonebook`)
+      return
+    }
     setPersons(persons.concat({
       name: newName
     }))
