@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
-
-const Contacto = ({contacto}) => {
+const Contacto = ({ contacto }) => {
   return (
     <div>
       {contacto.name} {contacto.number}
@@ -41,7 +40,7 @@ const App = () => {
 
   const onSubmit = (event) => {
     event.preventDefault()
-    if(alreadyExist()) {
+    if (alreadyExist()) {
       alert(`${newName} is already in the phonebook`)
       return
     }
@@ -54,7 +53,7 @@ const App = () => {
   }
 
   function applyFilter() {
-    if(filterValue === ''){
+    if (filterValue === '') {
       personsToShow = persons
       return
     }
@@ -67,21 +66,42 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Filter value={filterValue} onChange={onChangeFilterValue} />
+      <h3>Add a new</h3>
+      <PersonForm onSubmit={onSubmit} name={newName} onNameChange={onNewNameAdded}
+        phone={newPhoneNumber} onPhoneChange={onNewPhoneNumberAdded} />
+      <h3>Numbers</h3>
+      <Persons personsList={personsToShow} />
+    </div>
+  )
+}
+
+const Persons = ({personsList}) => {
+  return (
+    <div>
+      {personsList.map(person => <Contacto key={person.name} contacto={person} />)}
+    </div>
+  )
+}
+
+const PersonForm = ({ onSubmit, name, onNameChange, phone, onPhoneChange }) => {
+  return (
+    <form onSubmit={onSubmit}>
       <div>
-        filter shown with <input value={filterValue} onChange={onChangeFilterValue}/>
+        name: <input value={name} onChange={onNameChange} />
       </div>
-      <form onSubmit={onSubmit}>
-        <h2>add a new</h2>
-        <div>
-          name: <input value={newName} onChange={onNewNameAdded} />
-        </div>
-        <div>number: <input value={newPhoneNumber} onChange={onNewPhoneNumberAdded}/></div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {personsToShow.map(person => <Contacto key={person.name} contacto={person}/>)}      
+      <div>number: <input value={phone} onChange={onPhoneChange} /></div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
+const Filter = ({ value, onChange }) => {
+  return (
+    <div>
+      filter shown with <input value={value} onChange={onChange} />
     </div>
   )
 }
