@@ -1,18 +1,35 @@
 import { useState } from 'react'
 
+
+const Contacto = ({contacto}) => {
+  return (
+    <div>
+      {contacto.name} {contacto.phone}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { 
+      name: 'Arto Hellas',
+      phone: '6111111111'
+    }
   ]) 
   const [newName, setNewName] = useState('')
+  const [newPhoneNumber, setNewPhoneNumber] = useState('')
 
   const onNewNameAdded = (event) => {
     setNewName(event.target.value)
   }
 
+  const onNewPhoneNumberAdded = (event) => {
+    setNewPhoneNumber(event.target.value)
+  }
+
   function alreadyExist() {
     const names = persons.map(person => person.name.toLowerCase())
-    console.log("names",names)
+    //1console.log("names",names)
     return names.includes(newName.toLowerCase())
   }
 
@@ -23,9 +40,11 @@ const App = () => {
       return
     }
     setPersons(persons.concat({
-      name: newName
+      name: newName,
+      phone: newPhoneNumber
     }))
-    setNewName("")
+    setNewName('')
+    setNewPhoneNumber('')
   }
 
   return (
@@ -35,20 +54,13 @@ const App = () => {
         <div>
           name: <input value={newName} onChange={onNewNameAdded} />
         </div>
+        <div>number: <input value={newPhoneNumber} onChange={onNewPhoneNumberAdded}/></div>
         <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
       {persons.map(person => <Contacto key={person.name} contacto={person}/>)}      
-    </div>
-  )
-}
-
-const Contacto = ({contacto}) => {
-  return (
-    <div>
-      {contacto.name}
     </div>
   )
 }
