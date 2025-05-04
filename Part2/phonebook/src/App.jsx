@@ -55,12 +55,18 @@ const App = () => {
       alert(`${newName} is already in the phonebook`)
       return
     }
-    setPersons(persons.concat({
+    const newPerson = {
       name: newName,
       number: newPhoneNumber
-    }))
-    setNewName('')
-    setNewPhoneNumber('')
+    }
+    axios
+      .post("http://localhost:3001/persons", newPerson)
+      .then(response => {
+        console.log(response)
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewPhoneNumber('')
+      })
   }
 
   function applyFilter() {
