@@ -36,10 +36,33 @@ const App = () => {
     return names.includes(newName.toLowerCase())
   }
 
+  function udContacto() {
+    const contacto = persons.find(person => person.name.toLowerCase() === newName.toLocaleLowerCase())
+    const contactoUpdated = { ...contacto, number: newPhoneNumber }
+    //console.log('contacto', contacto)
+    //console.log('new contacto', contactoUpdated)
+    contactService
+      .update(contactoUpdated)
+      .then(response => {
+        setPersons(persons.map(person => person.id === contacto.id ? response.data : person))
+      })
+  }
+
+  function clearForm() {
+    setNewName('')
+    setNewPhoneNumber('')
+  }
+
   const onSubmit = (event) => {
     event.preventDefault()
     if (alreadyExist()) {
-      alert(`${newName} is already in the phonebook`)
+      //alert(`${newName} is already in the phonebook`)
+      const ok = confirm('El contacto ya existe....seguro que desea actualizar su numero?')
+      //console.log('dialog returns', ok)
+      if (ok) {
+        udContacto()
+        clearForm()
+      }
       return
     }
     const newPerson = {
@@ -51,8 +74,7 @@ const App = () => {
       .then(response => {
         //console.log(response)
         setPersons(persons.concat(response.data))
-        setNewName('')
-        setNewPhoneNumber('')
+        clearForm()
       })
   }
 
@@ -93,7 +115,7 @@ const App = () => {
 const Persons = ({ personsList, onDelete }) => {
   return (
     <div>
-      {personsList.map(person => <Contacto key={`${person.name}${person.id}`} contacto={person} onClick={()=>{onDelete(person.id)}} />)}
+      {personsList.map(person => <Contacto key={`${person.name}${person.id}`} contacto={person} onClick={() => { onDelete(person.id) }} />)}
     </div>
   )
 }
