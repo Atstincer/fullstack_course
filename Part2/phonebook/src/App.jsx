@@ -1,19 +1,6 @@
 import { useState, useEffect } from 'react'
 import contactService from './services/contacts'
 
-const Contacto = ({ contacto }) => {
-  return (
-    <div>
-      {contacto.name} {contacto.number}
-    </div>
-  )
-}
-
-/*{ name: 'Arto Hellas', number: '040-123456', id: 1 },
-{ name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-{ name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-{ name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }*/
-
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
@@ -23,11 +10,11 @@ const App = () => {
   let personsToShow = []
 
   useEffect(() => {
-    console.log('inside useEffect')
+    //console.log('inside useEffect')
     contactService
       .getAll()
       .then(response => {
-        console.log('getting the response, inside then')
+        //console.log('getting the response, inside then')
         setPersons(response.data)
       })
   }, [])
@@ -62,7 +49,7 @@ const App = () => {
     contactService
       .create(newPerson)
       .then(response => {
-        console.log(response)
+        //console.log(response)
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewPhoneNumber('')
@@ -78,6 +65,16 @@ const App = () => {
     personsToShow = filteredPersonsList
   }
 
+  const onDeleteButtonClicked = id => {
+    //console.log(`intentando eliminar contacto con id=${id}`)
+    contactService
+      .eliminar(id)
+      .then(response => {
+        //console.log('onDelete callback response:',response)
+        setPersons(persons.filter(person => person.id !== id))
+      })
+  }
+
   applyFilter()
 
   return (
@@ -88,15 +85,24 @@ const App = () => {
       <PersonForm onSubmit={onSubmit} name={newName} onNameChange={onNewNameAdded}
         phone={newPhoneNumber} onPhoneChange={onNewPhoneNumberAdded} />
       <h3>Numbers</h3>
-      <Persons personsList={personsToShow} />
+      <Persons personsList={personsToShow} onDelete={onDeleteButtonClicked} />
     </div>
   )
 }
 
-const Persons = ({ personsList }) => {
+const Persons = ({ personsList, onDelete }) => {
   return (
     <div>
-      {personsList.map(person => <Contacto key={person.name} contacto={person} />)}
+      {personsList.map(person => <Contacto key={`${person.name}${person.id}`} contacto={person} onClick={()=>{onDelete(person.id)}} />)}
+    </div>
+  )
+}
+
+const Contacto = ({ contacto, onClick }) => {
+  return (
+    <div>
+      {contacto.name} {contacto.number}
+      <button onClick={onClick}>delete</button>
     </div>
   )
 }

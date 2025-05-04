@@ -9,4 +9,8 @@ const create = contact => {
     return axios.post(baseUrl,contact)
 }
 
-export default {getAll,create}
+const eliminar = id => {
+    return axios.delete(`${baseUrl}/${id}`)
+}
+
+export default {getAll,create,eliminar}
