@@ -6,6 +6,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
+  const [mensaje, setMensaje] = useState('Somthing')
 
   let personsToShow = []
 
@@ -45,6 +46,8 @@ const App = () => {
       .update(contactoUpdated)
       .then(response => {
         setPersons(persons.map(person => person.id === contacto.id ? response.data : person))
+        setMensaje('Contacto actualizado correctamente')
+        setTimeout(()=>{ setMensaje(null) },3000)
       })
   }
 
@@ -75,6 +78,8 @@ const App = () => {
         //console.log(response)
         setPersons(persons.concat(response.data))
         clearForm()
+        setMensaje('Contacto creado correctamente')
+        setTimeout(()=>{ setMensaje(null) },3000)
       })
   }
 
@@ -94,6 +99,8 @@ const App = () => {
       .then(response => {
         //console.log('onDelete callback response:',response)
         setPersons(persons.filter(person => person.id !== id))
+        setMensaje('Contacto eliminado correctamente')
+        setTimeout(()=>{ setMensaje(null) },3000)
       })
   }
 
@@ -102,12 +109,22 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Mensaje mensaje={mensaje}/>
       <Filter value={filterValue} onChange={onChangeFilterValue} />
       <h3>Add a new</h3>
       <PersonForm onSubmit={onSubmit} name={newName} onNameChange={onNewNameAdded}
         phone={newPhoneNumber} onPhoneChange={onNewPhoneNumberAdded} />
       <h3>Numbers</h3>
       <Persons personsList={personsToShow} onDelete={onDeleteButtonClicked} />
+    </div>
+  )
+}
+
+const Mensaje = ({mensaje}) => {
+  if(mensaje === null) return null
+  return (
+    <div className='mensaje'>
+      {mensaje}
     </div>
   )
 }
