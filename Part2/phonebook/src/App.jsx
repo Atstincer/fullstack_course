@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import contactService from './services/contacts'
 
 const Contacto = ({ contacto }) => {
   return (
@@ -24,8 +24,8 @@ const App = () => {
 
   useEffect(() => {
     console.log('inside useEffect')
-    axios
-      .get("http://localhost:3001/persons")
+    contactService
+      .getAll()
       .then(response => {
         console.log('getting the response, inside then')
         setPersons(response.data)
@@ -59,8 +59,8 @@ const App = () => {
       name: newName,
       number: newPhoneNumber
     }
-    axios
-      .post("http://localhost:3001/persons", newPerson)
+    contactService
+      .create(newPerson)
       .then(response => {
         console.log(response)
         setPersons(persons.concat(response.data))
