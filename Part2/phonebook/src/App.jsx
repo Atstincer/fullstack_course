@@ -6,7 +6,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
-  const [mensaje, setMensaje] = useState('Somthing')
+  const [mensaje, setMensaje] = useState(null)
+  const [mensajeError, setMensajeError] = useState(null)
 
   let personsToShow = []
 
@@ -48,6 +49,11 @@ const App = () => {
         setPersons(persons.map(person => person.id === contacto.id ? response.data : person))
         setMensaje('Contacto actualizado correctamente')
         setTimeout(()=>{ setMensaje(null) },3000)
+      })
+      .catch(error => {
+        setMensajeError(`El contacto '${contacto.name}' ya no está registrado.`)
+        setPersons(persons.filter(p => p.id !== contacto.id))
+        setTimeout(()=>{setMensajeError(null)},3000)
       })
   }
 
@@ -102,6 +108,12 @@ const App = () => {
         setMensaje('Contacto eliminado correctamente')
         setTimeout(()=>{ setMensaje(null) },3000)
       })
+      .catch(error => {
+        const person = persons.find(p => p.id === id)
+        setMensajeError(`El contacto '${person.name}' no está registrado.`)
+        setPersons(persons.filter(p => p.id !== id))
+        setTimeout(()=>{setMensajeError(null)},3000)
+      })
   }
 
   applyFilter()
@@ -110,12 +122,22 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Mensaje mensaje={mensaje}/>
+      <MensajeError mensaje={mensajeError}/>
       <Filter value={filterValue} onChange={onChangeFilterValue} />
       <h3>Add a new</h3>
       <PersonForm onSubmit={onSubmit} name={newName} onNameChange={onNewNameAdded}
         phone={newPhoneNumber} onPhoneChange={onNewPhoneNumberAdded} />
       <h3>Numbers</h3>
       <Persons personsList={personsToShow} onDelete={onDeleteButtonClicked} />
+    </div>
+  )
+}
+
+const MensajeError = ({mensaje}) => {
+  if(mensaje === null) return null
+  return (
+    <div className='mensajeError'>
+      {mensaje}
     </div>
   )
 }
