@@ -15,8 +15,8 @@ function App() {
       })
   }, [])
 
-  function applyFilter(){
-    const cts = filter === '' ? [] : countries.filter(c=>c.name.common.toLowerCase().includes(filter.toLowerCase()))
+  function applyFilter() {
+    const cts = filter === '' ? [] : countries.filter(c => c.name.common.toLowerCase().includes(filter.toLowerCase()))
     setCountriesToShow(cts)
   }
 
@@ -29,42 +29,42 @@ function App() {
     setCountryToShow(country)
   }
 
-  useEffect(()=>{applyFilter()},[countries,filter])
+  useEffect(() => { applyFilter() }, [countries, filter])
 
   return (
     <div>
       <FIlterDiv value={filter} callback={onChangeFilterValue} />
-      <ResultDiv countries={countriesToShow} countryToShow={countryToShow} onShowCountry={onShowCountry}/>
+      <ResultDiv countries={countriesToShow} countryToShow={countryToShow} onShowCountry={onShowCountry} />
     </div>
   )
 }
 
-const ResultDiv = ({countries,countryToShow,onShowCountry}) => {
-  if(countries.length === 0) return null
-  if(countryToShow !== '') return <CountryDetailInfo country={countries.filter(c=>c.name.common.toLowerCase() === countryToShow.toLowerCase())[0]}/>
-  if(countries.length === 1) return <CountryDetailInfo country={countries[0]}/>
-  if(countries.length > 10){
+const ResultDiv = ({ countries, countryToShow, onShowCountry }) => {
+  if (countries.length === 0) return null
+  if (countryToShow !== '') return <CountryDetailInfo country={countries.filter(c => c.name.common.toLowerCase() === countryToShow.toLowerCase())[0]} />
+  if (countries.length === 1) return <CountryDetailInfo country={countries[0]} />
+  if (countries.length > 10) {
     return (
       <div>Too many matches, specify another filter</div>
     )
   }
-  if(countries.length <= 10){
+  if (countries.length <= 10) {
     return (
       <div>
-        {countries.map(c=><LineInfo key={c.name.common} countryName={c.name.common} onShowCountry={onShowCountry}/>)}
+        {countries.map(c => <LineInfo key={c.name.common} countryName={c.name.common} onShowCountry={onShowCountry} />)}
       </div>
     )
   }
 }
 
-const LineInfo = ({countryName,onShowCountry}) => {
+const LineInfo = ({ countryName, onShowCountry }) => {
   //console.log('on LineInfo',info)
-  return(
-    <div>{countryName} <button onClick={()=>{onShowCountry(countryName)}}>Show</button></div>
+  return (
+    <div>{countryName} <button onClick={() => { onShowCountry(countryName) }}>Show</button></div>
   )
 }
 
-const CountryDetailInfo = ({country}) => {
+const CountryDetailInfo = ({ country }) => {
   //console.log(country)
   return (
     <div>
@@ -73,11 +73,42 @@ const CountryDetailInfo = ({country}) => {
       <div>Area {country.area}</div>
       <h3>Languages</h3>
       <ul>
-        {Object.entries(country.languages).map(entry=><li key={entry[0]}>{entry[1]}</li>)}
+        {Object.entries(country.languages).map(entry => <li key={entry[0]}>{entry[1]}</li>)}
       </ul>
-      <img src={country.flags.png} alt="Country's flag"/>
+      <img src={country.flags.png} alt="Country's flag" />
+      <WeatherComponent country={country} />
     </div>
   )
+}
+
+const WeatherComponent = ({ country }) => {
+  const api_key = import.meta.env.VITE_WEATHER_KEY
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&APPID=${api_key}&units=metric`
+  const [weather,setWeather] = useState(null)
+
+  useEffect(() => {
+    axios
+      .get(url)
+      .then(response=>{
+        //console.log('response.data',response.data)
+        setWeather(response.data)
+        //console.log('temperature',response.data.main.temp)
+      })
+  }, [])
+
+  if(weather) {
+    const icon = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
+    //console.log('weather.weather',weather.weather)
+    return (
+      <div>
+        <h3>Weather in {country.capital}</h3>
+        <div>Temperature {weather.main.temp} Celsius</div>
+        <img src={icon} alt='icon'/>
+        <div>Wind {weather.wind.speed} m/s</div>
+      </div>
+    )
+  }
+  return null
 }
 
 const FIlterDiv = ({ value, callback }) => {
