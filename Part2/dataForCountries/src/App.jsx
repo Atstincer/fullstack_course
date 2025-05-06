@@ -5,6 +5,7 @@ function App() {
   const [filter, setFilter] = useState('')
   const [countries, setCountries] = useState([])
   const [countriesToShow, setCountriesToShow] = useState([])
+  const [countryToShow, setCountryToShow] = useState('')
 
   useEffect(() => {
     axios
@@ -19,22 +20,28 @@ function App() {
     setCountriesToShow(cts)
   }
 
-  const onChangeValue = event => {
+  const onChangeFilterValue = event => {
+    setCountryToShow('')
     setFilter(event.target.value)
+  }
+
+  const onShowCountry = country => {
+    setCountryToShow(country)
   }
 
   useEffect(()=>{applyFilter()},[countries,filter])
 
   return (
     <div>
-      <FIlterDiv value={filter} callback={onChangeValue} />
-      <ResultDiv countries={countriesToShow}/>
+      <FIlterDiv value={filter} callback={onChangeFilterValue} />
+      <ResultDiv countries={countriesToShow} countryToShow={countryToShow} onShowCountry={onShowCountry}/>
     </div>
   )
 }
 
-const ResultDiv = ({countries}) => {
+const ResultDiv = ({countries,countryToShow,onShowCountry}) => {
   if(countries.length === 0) return null
+  if(countryToShow !== '') return <CountryDetailInfo country={countries.filter(c=>c.name.common.toLowerCase() === countryToShow.toLowerCase())[0]}/>
   if(countries.length === 1) return <CountryDetailInfo country={countries[0]}/>
   if(countries.length > 10){
     return (
@@ -44,10 +51,17 @@ const ResultDiv = ({countries}) => {
   if(countries.length <= 10){
     return (
       <div>
-        {countries.map(c=><LineInfo key={c.name.common} info={c.name.common}/>)}
+        {countries.map(c=><LineInfo key={c.name.common} countryName={c.name.common} onShowCountry={onShowCountry}/>)}
       </div>
     )
   }
+}
+
+const LineInfo = ({countryName,onShowCountry}) => {
+  //console.log('on LineInfo',info)
+  return(
+    <div>{countryName} <button onClick={()=>{onShowCountry(countryName)}}>Show</button></div>
+  )
 }
 
 const CountryDetailInfo = ({country}) => {
@@ -63,13 +77,6 @@ const CountryDetailInfo = ({country}) => {
       </ul>
       <img src={country.flags.png} alt="Country's flag"/>
     </div>
-  )
-}
-
-const LineInfo = ({info}) => {
-  //console.log('on LineInfo',info)
-  return(
-    <div>{info}</div>
   )
 }
 
