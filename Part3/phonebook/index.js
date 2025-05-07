@@ -32,6 +32,16 @@ app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
 
+app.get('/api/persons/:id',(request,response)=>{
+    const person = persons.find(p=>p.id === request.params.id)
+    if(!person){
+        response.status(404).json({
+            error:'persona no encontrada'
+        })
+    }
+    response.json(person)
+})
+
 app.get('/info', (request, response) => {
     let date = new Date()
     let htmlInfo = `<div>Phonebook has info for ${persons.length} people</div>
