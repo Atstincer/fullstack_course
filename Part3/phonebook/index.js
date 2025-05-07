@@ -42,6 +42,11 @@ app.get('/api/persons/:id',(request,response)=>{
     response.json(person)
 })
 
+app.delete('/api/persons/:id',(request,response)=>{
+    persons = persons.filter(p => p.id !== request.params.id)
+    response.status(204).end()
+})
+
 app.get('/info', (request, response) => {
     let date = new Date()
     let htmlInfo = `<div>Phonebook has info for ${persons.length} people</div>
