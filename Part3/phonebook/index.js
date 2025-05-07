@@ -56,11 +56,26 @@ const getNextId = () => {
     }
 }
 
+const validate = (person) => {
+    if(!person) return {value:false,msg:'request body undifine'}
+    if(!person.name) return {value:false,msg:'name undifine'}
+    const names = persons.map(p => p.name.toLowerCase())
+    if(names.includes(person.name.toLowerCase())) return {value:false,msg:'name must be unique'}
+    if(!person.number) return {value:false,msg:'number undifine'}
+    return {value:true}
+}
+
 app.post('/api/persons',(request,response)=>{
     const person = request.body
-    if(person){
-        person.id = String(getNextId())
+    console.log(person)
+    const validation = validate(person)
+    console.log(validation)
+    if(!validation.value){
+        return response.status(400).json({
+            error: validation.msg
+        })
     }
+    person.id = String(getNextId())
     console.log(person)
     persons = persons.concat(person)
     response.json(person)
