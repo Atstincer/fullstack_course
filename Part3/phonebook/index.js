@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let persons = [
     {
         "id": "1",
@@ -39,6 +41,28 @@ app.get('/api/persons/:id',(request,response)=>{
             error:'persona no encontrada'
         })
     }
+    response.json(person)
+})
+
+const getNextId = () => {
+    const ids = persons.map(p => Number(p.id))
+    let valid = false
+    while(!valid){
+        const randomId = Math.floor(Math.random()*100)
+        if(!ids.includes(randomId)){
+            valid = true
+            return randomId
+        }
+    }
+}
+
+app.post('/api/persons',(request,response)=>{
+    const person = request.body
+    if(person){
+        person.id = String(getNextId())
+    }
+    console.log(person)
+    persons = persons.concat(person)
     response.json(person)
 })
 
