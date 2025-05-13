@@ -87,6 +87,11 @@ const App = () => {
         setMensaje('Contacto creado correctamente')
         setTimeout(()=>{ setMensaje(null) },3000)
       })
+      .catch(error => {
+        console.log(error.response.data.error)
+        setMensajeError(error.response.data.error)
+        setTimeout(()=>{ setMensajeError(null) },3000)
+      })
   }
 
   function applyFilter() {
