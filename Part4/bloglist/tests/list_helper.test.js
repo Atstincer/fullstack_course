@@ -70,6 +70,26 @@ describe('most blogs', () => {
   })
 })
 
+describe('most blogs with lodash', () => {
+  test('with an empty list returns undefined', () => {
+    assert.deepStrictEqual(listHelper._mostBLogs([]), undefined)
+  })
+
+  test('with only one item in the list', () => {
+    assert.deepStrictEqual(listHelper._mostBLogs(listWithOneBlog), {
+      author: 'Edsger W. Dijkstra',
+      blogs: 1
+    })
+  })
+
+  test('with several items on the list', () => {
+    assert.deepStrictEqual(listHelper._mostBLogs(blogs), {
+      author: "Robert C. Martin",
+      blogs: 3
+    })
+  })
+})
+
 describe('most likes', () => {
   test('with an empty list returns undefined', () => {
     assert.deepStrictEqual(listHelper.mostLikes([]), undefined)
@@ -84,6 +104,26 @@ describe('most likes', () => {
 
   test('with a lot of items in the list is OK', () => {
     assert.deepStrictEqual(listHelper.mostLikes(blogs), {
+      author: "Edsger W. Dijkstra",
+      likes: 17
+    })
+  })
+})
+
+describe('most likes with lodash', () => {
+  test('with an empty list returns undefined', () => {
+    assert.strictEqual(listHelper._mostLlikes([]), undefined)
+  })
+
+  test('with only one item returns ok', () => {
+    assert.deepStrictEqual(listHelper._mostLlikes(listWithOneBlog), {
+      author: 'Edsger W. Dijkstra',
+      likes: 5
+    })
+  })
+
+  test('with several items in the list', () => {
+    assert.deepStrictEqual(listHelper._mostLlikes(blogs), {
       author: "Edsger W. Dijkstra",
       likes: 17
     })
