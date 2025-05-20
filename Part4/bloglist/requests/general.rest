@@ -5,10 +5,24 @@ Content-Type: application/json
   "title": "Mi blog de carpinteria",
   "author": "Jesus",
   "url": "http://....",
-  "likes": 1
+  "likes": 7
 }
 
 ###
+PUT http://localhost:3003/api/blogs/682b5c09fe1485e48132db20
+Content-Type: application/json
 
+{
+  "title": "Mi blog de cafes",
+  "author": "Diana Luanda",
+  "url": "http://somthing.com",
+  "likes": 2
+}
+
+###
+//gets them all
 GET http://localhost:3003/api/blogs
+
+###
+DELETE http://localhost:3003/api/blogs/682b59d41b263d6330772ed5
 
