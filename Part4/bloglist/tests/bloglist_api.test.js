@@ -6,7 +6,6 @@ const app = require('../app')
 const Blog = require('../models/blog')
 const dummyList = require('./dummyData')
 const testHelper = require('./test_helper')
-const { title } = require('node:process')
 
 const api = supertest(app)
 
@@ -112,7 +111,7 @@ describe('deleting a blog', () => {
 })
 
 describe('updating a blog', () => {
-  test.only('updating a blog is ok', async () => {
+  test('updating a blog is ok', async () => {
     const initialBlog = (await testHelper.blogsInDB())[0]
     const updatedBlog = {
       ...initialBlog,
