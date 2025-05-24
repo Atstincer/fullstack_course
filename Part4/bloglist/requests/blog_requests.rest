@@ -24,5 +24,5 @@ Content-Type: application/json
 GET http://localhost:3003/api/blogs
 
 ###
-DELETE http://localhost:3003/api/blogs/682b59d41b263d6330772ed5
+DELETE http://localhost:3003/api/blogs/6832162bf4342abfed9f1e56
 
