@@ -21,6 +21,7 @@ mongoose.connect(config.MONGODB_URI)
 
 app.use(express.json())
 app.use(customMiddleware.requestLogger)
+app.use(customMiddleware.tokenExtractor)
 
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)
