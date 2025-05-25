@@ -17,17 +17,11 @@ blogRouter.get('/', async (request, response) => {
 }*/
 
 blogRouter.post('/', async (request, response) => {
-  //const decodedToken = jwt.verify(getStringToken(request), process.env.SECRET)
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if(!decodedToken.id){
-    return response.status(401).json({ error: 'invalid token' })
+  const user = request.user
+  if(!request.user) {
+    return response.status(401).json({error: 'invalid token' })
   }
-  
-  const user = await User.findById(decodedToken.id)
-  if(!user) {
-    return response.status(400).json({error: 'userId missing or not valid'})
-  }
-  console.log('user trying to add a note:', user)
+  //console.log('user trying to add a blog:', user)
   const { title, author, url, likes } = request.body
   const blog = new Blog({
     title, author, url, likes,
@@ -41,26 +35,17 @@ blogRouter.post('/', async (request, response) => {
 })
 
 blogRouter.delete('/:id', async (request, response, next) => {
-  /*try {
-    await Blog.findByIdAndDelete(request.params.id)
-    response.status(204).end()
-  } catch (error) {
-    next(error)
-  }*/
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if(!decodedToken.id){
-    return response.status(401).json({ error: 'invalid token' })
-  }
   const blog = await Blog.findById(request.params.id)
   if(!blog) {
     return response.status(400).json({ error: 'blog not found or invalid id'})
   }
-  console.log('blog.user.toString():', blog.user.toString())
-  console.log('decodedToken.id.toString():', decodedToken.id.toString())
-  if(blog.user.toString() !== decodedToken.id.toString()) {
+  const user = request.user
+  if(!user){
+    return response.status(401).json({ error: 'invalid token' })
+  }
+  if(blog.user.toString() !== user._id.toString()) {
     return response.status(401).json({ error: 'blog cannot be deleted...unauthorized user'})
   }
-  const user = await User.findById(blog.user)
   user.blogs = user.blogs.filter(id => id.toString() !== blog._id.toString())
   user.save()
   

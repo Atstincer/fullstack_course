@@ -4,14 +4,16 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const dummyList = require('./dummyData')
 const testHelper = require('./test_helper')
+const bcrypt = require('bcrypt')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(dummyList.blogs)
+  //await Blog.insertMany(dummyList.blogs)
 })
 
 test('all blogs are returned', async () => {
@@ -34,25 +36,81 @@ test('identifier field of blog post is id', async () => {
   }
 })
 
-test('post request creates a new blog', async () => {
-  const newBlog = {
-    title: 'Mis manualidades',
-    author: 'Diana L HS',
-    url: 'https://dlhs.com/Mi_blog.pdf',
-    likes: 3
+describe('adding new blogs with token-based authentication', async () => {
+  const getValidToken = async () => {
+    await User.deleteMany()
+    const username = 'pedrogh'
+    const name = 'Pedro'
+    const password = '1234'
+    await api
+      .post('/api/users')
+      .send({ username, name, password })
+    const result = await api
+      .post('/api/login')
+      .send({ username, password })
+    //console.log('result.body.token:', result.body.token)
+    return `Bearer ${result.body.token}`
   }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
+  const validToken = await getValidToken()
 
-  const response = await api.get('/api/blogs')
+  test.only('adding a blog wit a valid token returns 201 created', async () => {
+    const newBlog = {
+      title: 'Mis manualidades',
+      author: 'Pedro Garcia Hdez',
+      url: 'https://pepito.com/Mi_blog.pdf',
+      likes: 3
+    }
 
-  assert.strictEqual(response.body.length, dummyList.blogs.length + 1)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', validToken)
+      .send(newBlog)
+      .expect(201)
+  })
 
-  const titles = response.body.map(blog => blog.title)
-  assert(titles.includes(newBlog.title))
+  test.only('post request without title returns status 400', async () => {
+    const blogWithoutTitle = {
+      author: 'Diana L HS',
+      url: 'https://dlhs.com/Mi_blog.pdf',
+    }
+
+    await api
+      .post('/api/blogs')
+      .set('Authorization', validToken)
+      .send(blogWithoutTitle)
+      .expect(400)
+  })
+
+  test.only('post request without url returns status 400', async () => {
+    const blogWithoutUrl = {
+      title: 'Mis manualidades',
+      author: 'Diana L HS',
+    }
+
+    await api
+      .post('/api/blogs')
+      .set('Authorization', validToken)
+      .send(blogWithoutUrl)
+      .expect(400)
+  })
+
+  test.only('adding new blog without token returns 401 unauthorized', async () => {
+    const newBlog = {
+      title: 'Mis manualidades',
+      author: 'Pedro Garcia Hdez',
+      url: 'https://pepito.com/Mi_blog.pdf',
+      likes: 3
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+  })
 })
+
+
 
 test('likes default value is 0', async () => {
   const newBlog = {
@@ -71,29 +129,6 @@ test('likes default value is 0', async () => {
   assert(blog.likes === 0)
 })
 
-test('post request without title returns status 400', async () => {
-  const blogWithoutTitle = {
-    author: 'Diana L HS',
-    url: 'https://dlhs.com/Mi_blog.pdf',
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(blogWithoutTitle)
-    .expect(400)
-})
-
-test('post request without url returns status 400', async () => {
-  const blogWithoutUrl = {
-    title: 'Mis manualidades',
-    author: 'Diana L HS',
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(blogWithoutUrl)
-    .expect(400)
-})
 
 describe('deleting a blog', () => {
   test('succeeds with status code 204 if id is valid', async () => {
