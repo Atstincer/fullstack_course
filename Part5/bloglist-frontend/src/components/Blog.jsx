@@ -1,8 +1,17 @@
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, addOneLike, removeBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
 
+  const showDeleteButtton = () => {
+    const userLoggedIn = window.localStorage.getItem('loggedBlogAppUser')
+    if(userLoggedIn) {
+      const user = JSON.parse(userLoggedIn)
+      return user.username === blog.user.username
+    }
+    return false
+  }
+  
   const toggleVisibility = () => {
     setShowDetails(!showDetails)
   }
@@ -10,6 +19,7 @@ const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 7,
     paddingLeft: 2,
+    paddingBottom: 5,
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
@@ -19,8 +29,9 @@ const Blog = ({ blog }) => {
     return (
       <div>
         <div>{blog.url}</div>
-        <div>likes {blog.likes} <button>like</button></div>
+        <div>likes {blog.likes} <button onClick={() => { addOneLike(blog) }}>like</button></div>
         <div>{blog.user.name}</div>
+        {showDeleteButtton() && <button onClick={() => { removeBlog(blog) }} style={ {background: 'blue'} }>remove</button>}
       </div>
     )
   }

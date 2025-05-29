@@ -28,9 +28,11 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    async function getBlogs() {
+      const blogs = await blogService.getAll()
       setBlogs(blogs)
-    )
+    }
+    getBlogs()
   }, [])
 
   useEffect(() => {
@@ -66,7 +68,7 @@ const App = () => {
   }
 
   const addNewBlog = async (newBlog) => {
-    try{
+    try {
       //blogFormRef.current.toggleVisibility() -> error: TypeError: blogFormRef.current.toggleVisibility is not a function
       blogFormRef.current()
       const blogCreated = await blogService.create(newBlog)
@@ -77,6 +79,37 @@ const App = () => {
       console.log('error:', error)
       setErrorMessage(error.response.data.error)
       setTimeout(() => { setErrorMessage(null) }, 3000)
+    }
+  }
+
+  const addOneLike = async blog => {
+    try {
+      //console.log('blog recibido:', blog)
+      const blogToUpdate = { ...blog, likes: blog.likes + 1 }
+      //console.log('blogToUpdate:', blogToUpdate)
+      const updatedBlog = await blogService.update(blogToUpdate)
+      await updateBlogsToShow()
+      setMessage(`${updatedBlog.title} has now ${updatedBlog.likes} likes`)
+      setTimeout(() => { setMessage('') }, 3000)
+    } catch (error) {
+      console.log('error:', error)
+      setErrorMessage(error.response.data.error)
+      setTimeout(() => { setErrorMessage('') }, 3000)
+    }
+  }
+
+  const removeBlog = async blog => {
+    const conf = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+    //console.log('conf:', conf)
+    if(conf){
+      try{
+        await blogService.deleteBlog(blog)
+        setMessage('Blog delete successfully')
+        setTimeout(() => { setMessage('') }, 3000)
+        updateBlogsToShow()
+      } catch (error){
+        console.log('error', error)
+      }
     }
   }
 
@@ -100,13 +133,13 @@ const App = () => {
         {user.username} logged in
         <button onClick={handleLogout}>logout</button>
       </div>
-      
+
       <ToggleViews buttonLabel='new blog' ref={blogFormRef}>
         <NewBlogForm addNewBlog={addNewBlog} />
       </ToggleViews>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addOneLike={addOneLike} removeBlog={removeBlog}/>
       )}
     </div>
   )

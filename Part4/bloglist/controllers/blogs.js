@@ -8,14 +8,6 @@ blogRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-/*const getStringToken = request => {
-  const authorization = request.get('authorization')
-  if(authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}*/
-
 blogRouter.post('/', async (request, response) => {
   const user = request.user
   if(!request.user) {
@@ -40,27 +32,39 @@ blogRouter.delete('/:id', async (request, response, next) => {
     return response.status(400).json({ error: 'blog not found or invalid id'})
   }
   const user = request.user
+  //console.log('blog found in backend:', blog)
+  //console.log('user found in backend:', user)
   if(!user){
-    return response.status(401).json({ error: 'invalid token' })
+    return response.status(401).json({ error: 'invalid token...user not found' })
   }
   if(blog.user.toString() !== user._id.toString()) {
     return response.status(401).json({ error: 'blog cannot be deleted...unauthorized user'})
   }
+  console.log('user.blogs before removing:', user.blogs)
   user.blogs = user.blogs.filter(id => id.toString() !== blog._id.toString())
-  user.save()
+  console.log('user.blogs after removing:', user.blogs)
+  await user.save()
   
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
 
 blogRouter.put('/:id', async (request, response) => {
-  const { title, author, url, likes } = request.body
+  /*const userR = request.user
+  if(!userR){
+    return response.status(401).json({ erro: 'invalid token'})
+  }*/
+  const { title, author, url, likes, user } = request.body
   const blogInDB = await Blog.findById(request.params.id)
+  /*if(userR._id.toString() !== blogInDB.user.toString()){
+    return response.status(401).json({ error: 'blog cannot be updated...unauthorized user' })
+  }*/
   if(!blogInDB) return response.status(404).end()
   blogInDB.title = title
   blogInDB.author = author
   blogInDB.url = url
   blogInDB.likes = likes
+  blogInDB.user = user.id
 
   const blogUpdated = await blogInDB.save()
   response.json(blogUpdated)

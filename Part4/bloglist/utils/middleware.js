@@ -30,18 +30,25 @@ const errorHandler = (error, request, response, next) => {
 }
 
 const tokenExtractor = (request, response, next) => {
+  //console.log('request in tokenExtractor:', request)
   const authorizacion = request.get('authorization')
+  //console.log('getting authorization in tokenExtractor:', authorizacion)
   if(authorizacion && authorizacion.startsWith('Bearer ')){
     request.token = authorizacion.replace('Bearer ', '')
+    //console.log('saving token to request.token in backend:', request.token)
   }
   next()
 }
 
 const userExtractor = async (request, response, next) => {
+  //console.log('getting user in userExtractor backend:')
+  //console.log('getting token in userExtractor backend:', request.token)
   if(request.token){
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    //console.log('decoded token:', decodedToken)
     if(decodedToken.id){
       const user = await User.findById(decodedToken.id)
+      //console.log('user after query:', user)
       if(user) {
         request.user = user
       }
