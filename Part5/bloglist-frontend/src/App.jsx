@@ -101,13 +101,13 @@ const App = () => {
   const removeBlog = async blog => {
     const conf = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
     //console.log('conf:', conf)
-    if(conf){
-      try{
+    if (conf) {
+      try {
         await blogService.deleteBlog(blog)
         setMessage('Blog delete successfully')
         setTimeout(() => { setMessage('') }, 3000)
         updateBlogsToShow()
-      } catch (error){
+      } catch (error) {
         console.log('error', error)
       }
     }
@@ -139,7 +139,7 @@ const App = () => {
       </ToggleViews>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} addOneLike={addOneLike} removeBlog={removeBlog}/>
+        <Blog key={blog.id} blog={blog} addOneLike={addOneLike} removeBlog={removeBlog} />
       )}
     </div>
   )

@@ -5,13 +5,13 @@ const Blog = ({ blog, addOneLike, removeBlog }) => {
 
   const showDeleteButtton = () => {
     const userLoggedIn = window.localStorage.getItem('loggedBlogAppUser')
-    if(userLoggedIn) {
+    if (userLoggedIn) {
       const user = JSON.parse(userLoggedIn)
       return user.username === blog.user.username
     }
     return false
   }
-  
+
   const toggleVisibility = () => {
     setShowDetails(!showDetails)
   }
@@ -31,7 +31,7 @@ const Blog = ({ blog, addOneLike, removeBlog }) => {
         <div>{blog.url}</div>
         <div>likes {blog.likes} <button onClick={() => { addOneLike(blog) }}>like</button></div>
         <div>{blog.user.name}</div>
-        {showDeleteButtton() && <button onClick={() => { removeBlog(blog) }} style={ {background: 'blue'} }>remove</button>}
+        {showDeleteButtton() && <button onClick={() => { removeBlog(blog) }} style={{ background: 'blue' }}>remove</button>}
       </div>
     )
   }

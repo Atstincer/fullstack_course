@@ -7,7 +7,7 @@ const LoginForm = ({ login }) => {
   return (
     <form onSubmit={(event) => {
       event.preventDefault()
-      login({username, password})
+      login({ username, password })
       setUsername('')
       setPassWord('')
     }}>
