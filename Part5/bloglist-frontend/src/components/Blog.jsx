@@ -27,9 +27,9 @@ const Blog = ({ blog, addOneLike, removeBlog }) => {
 
   const blogDetails = () => {
     return (
-      <div>
-        <div>{blog.url}</div>
-        <div>likes {blog.likes} <button onClick={() => { addOneLike(blog) }}>like</button></div>
+      <div className='div_blogDetails'>
+        <div className='div_url'>{blog.url}</div>
+        <div className='div_likes'>likes {blog.likes} <button id='btn_addonelike' onClick={() => { addOneLike(blog) }}>like</button></div>
         <div>{blog.user.name}</div>
         {showDeleteButtton() && <button onClick={() => { removeBlog(blog) }} style={{ background: 'blue' }}>remove</button>}
       </div>
@@ -39,7 +39,7 @@ const Blog = ({ blog, addOneLike, removeBlog }) => {
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
-      <button onClick={toggleVisibility}>{showDetails ? 'hide' : 'show'}</button>
+      <button id='btn_show_details' onClick={toggleVisibility}>{showDetails ? 'hide' : 'show'}</button>
       {showDetails && blogDetails()}
     </div>
   )
