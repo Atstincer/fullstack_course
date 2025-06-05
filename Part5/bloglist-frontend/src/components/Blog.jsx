@@ -27,7 +27,7 @@ const Blog = ({ blog, addOneLike, removeBlog }) => {
 
   const blogDetails = () => {
     return (
-      <div className='div_blogDetails'>
+      <div className='div_blogDetails' data-testid='div_blogDetails'>
         <div className='div_url'>{blog.url}</div>
         <div className='div_likes'>likes {blog.likes} <button id='btn_addonelike' onClick={() => { addOneLike(blog) }}>like</button></div>
         <div>{blog.user.name}</div>
@@ -37,7 +37,7 @@ const Blog = ({ blog, addOneLike, removeBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} data-testid='blog_info_div'>
       {blog.title} {blog.author}
       <button id='btn_show_details' onClick={toggleVisibility}>{showDetails ? 'hide' : 'show'}</button>
       {showDetails && blogDetails()}

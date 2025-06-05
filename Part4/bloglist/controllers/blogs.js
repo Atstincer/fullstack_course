@@ -40,9 +40,9 @@ blogRouter.delete('/:id', async (request, response, next) => {
   if(blog.user.toString() !== user._id.toString()) {
     return response.status(401).json({ error: 'blog cannot be deleted...unauthorized user'})
   }
-  console.log('user.blogs before removing:', user.blogs)
+  //console.log('user.blogs before removing:', user.blogs)
   user.blogs = user.blogs.filter(id => id.toString() !== blog._id.toString())
-  console.log('user.blogs after removing:', user.blogs)
+  //console.log('user.blogs after removing:', user.blogs)
   await user.save()
   
   await Blog.findByIdAndDelete(request.params.id)

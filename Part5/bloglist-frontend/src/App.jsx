@@ -16,7 +16,7 @@ const Message = ({ msg }) => {
 const ErrorMessage = ({ msg }) => {
   if (!msg) return null
   return (
-    <div className='error_message'>{msg}</div>
+    <div className='error_message' data-testid='errormsg_div'>{msg}</div>
   )
 }
 
