@@ -7,7 +7,6 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const dummyList = require('./dummyData')
 const testHelper = require('./test_helper')
-const bcrypt = require('bcrypt')
 
 const api = supertest(app)
 
@@ -16,24 +15,31 @@ beforeEach(async () => {
   //await Blog.insertMany(dummyList.blogs)
 })
 
-test('all blogs are returned', async () => {
-  const response = await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('general blog api tests', () => {
+  beforeEach(async () => {
+    await Blog.insertMany(dummyList.blogs)
+  })
 
-  assert.strictEqual(response.body.length, dummyList.blogs.length)
-})
+  test('all blogs are returned', async () => {
 
-test('identifier field of blog post is id', async () => {
-  const response = await api
-    .get('/api/blogs')
-  const blogs = response.body
-  for (let index in blogs) {
-    const k = Object.keys(blogs[index])
-    assert(k.includes('id') && !k.includes('_id'))
-    //assert(!k.includes('_id'))
-  }
+    const response = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.length, dummyList.blogs.length)
+  })
+
+  test('identifier field of blog post is id', async () => {
+    const response = await api
+      .get('/api/blogs')
+    const blogs = response.body
+    for (let index in blogs) {
+      const k = Object.keys(blogs[index])
+      assert(k.includes('id') && !k.includes('_id'))
+      //assert(!k.includes('_id'))
+    }
+  })
 })
 
 describe('adding new blogs with token-based authentication', async () => {
