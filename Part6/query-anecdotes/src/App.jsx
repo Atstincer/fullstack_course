@@ -2,8 +2,14 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getAllAnecdotes, vote } from './requests'
+//import { useContext } from 'react'
+import { useNotDispatcher } from './NotificationContext'
+//import NotificationContext from './NotificationContext'
 
 const App = () => {
+
+  //const [message, notDispacher] = useContext(NotificationContext)
+  const notDispacher = useNotDispatcher()
 
   const queryClient = useQueryClient()
 
@@ -21,6 +27,8 @@ const App = () => {
   const handleVote = (anecdote) => {
     //console.log('vote')
     voteMutation.mutate(anecdote)
+    notDispacher({type:'SET_NOTIFICATION', payload: `Voted "${anecdote.content}"`})
+    setTimeout(() => { notDispacher({type:'REMOVE_NOTIFICATION'}) }, 5000)
   }
 
   const result = useQuery({
@@ -32,11 +40,11 @@ const App = () => {
 
   console.log(JSON.parse(JSON.stringify(result)))
 
-  if( result.isLoading ) {
+  if (result.isLoading) {
     return <div>loading ...</div>
   }
 
-  if( result.status === 'error' ) {
+  if (result.status === 'error') {
     return <div>anecdote service not available due to problems in server</div>
   }
 
@@ -45,10 +53,10 @@ const App = () => {
   return (
     <div>
       <h3>Anecdote app</h3>
-    
+
       <Notification />
       <AnecdoteForm />
-    
+
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
