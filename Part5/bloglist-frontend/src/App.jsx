@@ -5,27 +5,16 @@ import LoginForm from './components/LoginForm'
 import ToggleViews from './components/ToggleViews'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const Message = ({ msg }) => {
-  if (!msg) return null
-  return (
-    <div className='message'>{msg}</div>
-  )
-}
-
-const ErrorMessage = ({ msg }) => {
-  if (!msg) return null
-  return (
-    <div className='error_message' data-testid='errormsg_div'>{msg}</div>
-  )
-}
+import Notification from './components/Notification'
+import { useDispatch } from 'react-redux'
+import { setSuccessMesage, setErrorMesage, removeMsg } from './reducers/notification_reducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
   const blogFormRef = useRef()
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     async function getBlogs() {
@@ -56,8 +45,8 @@ const App = () => {
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
     } catch (error) {
-      setErrorMessage(error.response.data.error)
-      setTimeout(() => { setErrorMessage(null) }, 3000)
+      dispatch(setErrorMesage(error.response.data.error))
+      setTimeout(() => { dispatch(removeMsg()) }, 3000)
     }
   }
 
@@ -69,43 +58,39 @@ const App = () => {
 
   const addNewBlog = async (newBlog) => {
     try {
-      //blogFormRef.current.toggleVisibility() -> error: TypeError: blogFormRef.current.toggleVisibility is not a function
       blogFormRef.current()
       const blogCreated = await blogService.create(newBlog)
       await updateBlogsToShow()
-      setMessage(`a new blog ${blogCreated.title} by ${blogCreated.author}`)
-      setTimeout(() => { setMessage(null) }, 3000)
+      dispatch(setSuccessMesage(`a new blog ${blogCreated.title} by ${blogCreated.author}`))
+      setTimeout(() => { dispatch(removeMsg()) }, 3000)
     } catch (error) {
       console.log('error:', error)
-      setErrorMessage(error.response.data.error)
-      setTimeout(() => { setErrorMessage(null) }, 3000)
+      dispatch(setErrorMesage(error.response.data.error))
+      setTimeout(() => { dispatch(removeMsg()) }, 3000)
     }
   }
 
   const addOneLike = async blog => {
     try {
-      //console.log('blog recibido:', blog)
       const blogToUpdate = { ...blog, likes: blog.likes + 1 }
-      //console.log('blogToUpdate:', blogToUpdate)
       const updatedBlog = await blogService.update(blogToUpdate)
       await updateBlogsToShow()
-      setMessage(`${updatedBlog.title} has now ${updatedBlog.likes} likes`)
-      setTimeout(() => { setMessage('') }, 3000)
+      dispatch(setSuccessMesage(`${updatedBlog.title} has now ${updatedBlog.likes} likes`))
+      setTimeout(() => { dispatch(removeMsg()) }, 3000)
     } catch (error) {
       console.log('error:', error)
-      setErrorMessage(error.response.data.error)
-      setTimeout(() => { setErrorMessage('') }, 3000)
+      dispatch(setErrorMesage(error.response.data.error))
+      setTimeout(() => { dispatch(removeBlog()) }, 3000)
     }
   }
 
   const removeBlog = async blog => {
     const conf = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
-    //console.log('conf:', conf)
     if (conf) {
       try {
         await blogService.deleteBlog(blog)
-        setMessage('Blog delete successfully')
-        setTimeout(() => { setMessage('') }, 3000)
+        dispatch(setSuccessMesage('Blog deleted successfully'))
+        setTimeout(() => { dispatch(removeMsg()) }, 3000)
         updateBlogsToShow()
       } catch (error) {
         console.log('error', error)
@@ -117,8 +102,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Message msg={message} />
-        <ErrorMessage msg={errorMessage} />
+        <Notification />
         <LoginForm login={login} />
       </div>
     )
@@ -127,8 +111,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Message msg={message} />
-      <ErrorMessage msg={errorMessage} />
+      <Notification />
       <div>
         {user.username} logged in
         <button onClick={handleLogout}>logout</button>
