@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux"
 
 const Notification = () => {
-  const not = useSelector(state => state)
-
+  const not = useSelector(state => state.notification)
+  //console.log('msg in Notification component', not)
   if (!not.msg) return null
   switch (not.kind) {
     case 'success':

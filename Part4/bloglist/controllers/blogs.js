@@ -1,7 +1,8 @@
+const mongoose = require('mongoose')
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+//const User = require('../models/user')
+//const jwt = require('jsonwebtoken')
 
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -22,8 +23,11 @@ blogRouter.post('/', async (request, response) => {
   const blogSaved = await blog.save()
   user.blogs = user.blogs.concat(blogSaved._id)
   await user.save()
-  
-  response.status(201).json(blogSaved)
+
+  const mongooseQueryObject = await Blog.find({_id: mongoose.Types.ObjectId.createFromHexString(blogSaved.id)}).populate('user', { username: 1, name: 1 })
+  //console.log('blog found', mongooseQueryObject)
+
+  response.status(201).json(mongooseQueryObject[0]) 
 })
 
 blogRouter.delete('/:id', async (request, response, next) => {

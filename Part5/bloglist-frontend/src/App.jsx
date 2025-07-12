@@ -1,109 +1,55 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import LoginForm from './components/LoginForm'
 import ToggleViews from './components/ToggleViews'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import Notification from './components/Notification'
-import { useDispatch } from 'react-redux'
-import { setSuccessMesage, setErrorMesage, removeMsg } from './reducers/notification_reducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { initialiceBlogs, createBlog, deleteBlog, addLikeToBlog } from './reducers/blogs_reducer'
+import { setUserIfLoggedIn, loggin, logout } from './reducers/user_reducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
+  const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
   const blogFormRef = useRef()
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    async function getBlogs() {
-      const blogs = await blogService.getAll()
-      setBlogs(blogs)
-    }
-    getBlogs()
+    dispatch(initialiceBlogs())
   }, [])
 
   useEffect(() => {
-    const userLoggedIn = window.localStorage.getItem('loggedBlogAppUser')
-    if (userLoggedIn) {
-      const userObject = JSON.parse(userLoggedIn)
-      setUser(userObject)
-      blogService.setToken(userObject.token)
-    }
+    dispatch(setUserIfLoggedIn())
   }, [])
 
-  const updateBlogsToShow = async () => {
-    const blogsInDb = await blogService.getAll()
-    setBlogs(blogsInDb)
-  }
-
-  const login = async credentials => {
-    try {
-      const user = await loginService.login(credentials)
-      setUser(user)
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-    } catch (error) {
-      dispatch(setErrorMesage(error.response.data.error))
-      setTimeout(() => { dispatch(removeMsg()) }, 3000)
-    }
+  const handleLogin = credentials => {
+    dispatch(loggin(credentials))
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogAppUser')
-    setUser(null)
-    blogService.setToken(null)
+    dispatch(logout())
   }
 
   const addNewBlog = async (newBlog) => {
-    try {
-      blogFormRef.current()
-      const blogCreated = await blogService.create(newBlog)
-      await updateBlogsToShow()
-      dispatch(setSuccessMesage(`a new blog ${blogCreated.title} by ${blogCreated.author}`))
-      setTimeout(() => { dispatch(removeMsg()) }, 3000)
-    } catch (error) {
-      console.log('error:', error)
-      dispatch(setErrorMesage(error.response.data.error))
-      setTimeout(() => { dispatch(removeMsg()) }, 3000)
-    }
+    blogFormRef.current()
+    dispatch(createBlog(newBlog))
   }
 
   const addOneLike = async blog => {
-    try {
-      const blogToUpdate = { ...blog, likes: blog.likes + 1 }
-      const updatedBlog = await blogService.update(blogToUpdate)
-      await updateBlogsToShow()
-      dispatch(setSuccessMesage(`${updatedBlog.title} has now ${updatedBlog.likes} likes`))
-      setTimeout(() => { dispatch(removeMsg()) }, 3000)
-    } catch (error) {
-      console.log('error:', error)
-      dispatch(setErrorMesage(error.response.data.error))
-      setTimeout(() => { dispatch(removeBlog()) }, 3000)
-    }
+    dispatch(addLikeToBlog(blog))
   }
 
   const removeBlog = async blog => {
-    const conf = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
-    if (conf) {
-      try {
-        await blogService.deleteBlog(blog)
-        dispatch(setSuccessMesage('Blog deleted successfully'))
-        setTimeout(() => { dispatch(removeMsg()) }, 3000)
-        updateBlogsToShow()
-      } catch (error) {
-        console.log('error', error)
-      }
-    }
+    dispatch(deleteBlog(blog))
   }
 
-  if (user === null) {
+  if (!user.username) {
     return (
       <div>
         <h2>Log in to application</h2>
         <Notification />
-        <LoginForm login={login} />
+        <LoginForm login={handleLogin} />
       </div>
     )
   }

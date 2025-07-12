@@ -3,12 +3,17 @@ import { useState } from 'react'
 const Blog = ({ blog, addOneLike, removeBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
 
+  //console.log('Inside Blog component:', blog)
+
   const showDeleteButtton = () => {
     const userLoggedIn = window.localStorage.getItem('loggedBlogAppUser')
     if (userLoggedIn) {
       const user = JSON.parse(userLoggedIn)
+      //console.log('user', user)
+      //console.log('user.username === blog.user.username',user.username === blog.user.username)
       return user.username === blog.user.username
     }
+    //console.log('no user logged in')
     return false
   }
 
