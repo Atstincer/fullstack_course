@@ -1,4 +1,8 @@
-const Notification = ({ notification }) => {
+import { useNotificationState } from './NotificationContext'
+
+const Notification = () => {
+  const notification = useNotificationState()
+
   if (!notification) return null
   switch (notification.type) {
     case 'success':
