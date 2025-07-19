@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import LoginForm from './components/LoginForm'
@@ -12,20 +12,30 @@ import {
   getRemoveNotAction,
   useNotificationDispatch
 } from './components/NotificationContext'
+import {
+  useUserState,
+  useUserDispatch,
+  getRemoveUserAction,
+  getSetUserAction
+} from './components/UserContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 const App = () => {
-  const [user, setUser] = useState(null)
+  //const [user, setUser] = useState(null)
+  const user = useUserState()
   const notDispatch = useNotificationDispatch()
   const blogFormRef = useRef()
   const queryClient = useQueryClient()
+
+  const userDispatch = useUserDispatch()
 
   useEffect(() => {
     const userLoggedIn = window.localStorage.getItem('loggedBlogAppUser')
     if (userLoggedIn) {
       const userObject = JSON.parse(userLoggedIn)
-      setUser(userObject)
+      //setUser(userObject)
       blogService.setToken(userObject.token)
+      userDispatch(getSetUserAction(userObject))
     }
   }, [])
 
@@ -108,9 +118,10 @@ const App = () => {
   const handleLogin = async credentials => {
     try {
       const user = await loginService.login(credentials)
-      setUser(user)
+      //setUser(user)
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
+      userDispatch(getSetUserAction(user))
     } catch (error) {
       notDispatch(getErrorMsgAction(error.response.data.error))
       setTimeout(() => {
@@ -137,8 +148,9 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
-    setUser(null)
+    //setUser(null)
     blogService.setToken(null)
+    userDispatch(getRemoveUserAction())
   }
 
   const addNewBlog = async newBlog => {
