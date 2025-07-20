@@ -31,13 +31,13 @@ const App = () => {
     queryKey: ['users']
   })
 
-  /*const match = useMatch('/users/:id')
+  const match = useMatch('/users/:id')
   const userToShowDetails =
     match && !usersQueryResult.isLoading
-      ? usersQueryResult.data.find(u => u.id === Number(match.params.id))
-      : null*/
+      ? usersQueryResult.data.find(u => u.id === match.params.id)
+      : null
 
-  const users = usersQueryResult.isLoading ? null : usersQueryResult.data
+  //const users = usersQueryResult.isLoading ? null : usersQueryResult.data
 
   useEffect(() => {
     const userLoggedIn = window.localStorage.getItem('loggedBlogAppUser')
@@ -90,7 +90,10 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<UsersTable result={usersQueryResult} />} />
-        <Route path="/users/:id" element={<UserDetail users={users} />} />
+        <Route
+          path="/users/:id"
+          element={<UserDetail user={userToShowDetails} />}
+        />
         <Route
           path="/users"
           element={<UsersTable result={usersQueryResult} />}
