@@ -1,3 +1,12 @@
+:root {
+  --grey: #f6f6f6;
+  --body: #d49555;
+}
+
+.body {
+  background-color: var(--grey);
+}
+
 .message {
   color: green;
   background: lightgrey;
@@ -6,6 +15,7 @@
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 .error_message {
@@ -16,4 +26,22 @@
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.standard-form {
+  border: 1px solid black;
+  max-width: fit-content;
+  max-height: fit-content;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.login-container {
+  min-height: 300px;
+}
+
+.btn-primary:hover {
+  background-color: #d49555;
 }

@@ -1,3 +1,5 @@
+import BlogList from './BlogList'
+
 const UserDetail = ({ user }) => {
   if (!user) return null
 
@@ -7,9 +9,7 @@ const UserDetail = ({ user }) => {
       <h4>added blogs</h4>
       <ul>
         {user.blogs.length > 0 ? (
-          user.blogs.map(b => {
-            return <li key={b.id}>{b.title}</li>
-          })
+          <BlogList blogsToShow={user.blogs} />
         ) : (
           <div>no blogs added yet</div>
         )}

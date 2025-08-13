@@ -1,19 +1,21 @@
-import { useState, forwardRef, useImperativeHandle } from "react";
-import PropTypes from "prop-types";
+import { useState, forwardRef, useImperativeHandle } from 'react'
+import PropTypes from 'prop-types'
 
-const ToggleViews = forwardRef((props, refs) => {
-  const [visible, setVisible] = useState(false);
+const ToggleViews = forwardRef((props, ref) => {
+  const [visible, setVisible] = useState(false)
 
-  const showWhenVisible = { display: visible ? "" : "none" };
-  const hideWhenVisible = { display: visible ? "none" : "" };
+  const showWhenVisible = { display: visible ? '' : 'none' }
+  const hideWhenVisible = { display: visible ? 'none' : '' }
 
   const toggleVisibility = () => {
-    setVisible(!visible);
-  };
+    setVisible(!visible)
+  }
 
-  useImperativeHandle(refs, () => {
-    return toggleVisibility;
-  });
+  useImperativeHandle(ref, () => {
+    return {
+      toggleVisibility
+    }
+  })
 
   return (
     <div>
@@ -22,16 +24,16 @@ const ToggleViews = forwardRef((props, refs) => {
       </button>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
+        {/*<button onClick={toggleVisibility}>cancel</button>*/}
       </div>
     </div>
-  );
-});
+  )
+})
 
 ToggleViews.propTypes = {
-  buttonLabel: PropTypes.string.isRequired,
-};
+  buttonLabel: PropTypes.string.isRequired
+}
 
-ToggleViews.displayName = "ToggleViews";
+ToggleViews.displayName = 'ToggleViews'
 
-export default ToggleViews;
+export default ToggleViews

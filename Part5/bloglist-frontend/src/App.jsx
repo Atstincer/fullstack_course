@@ -1,12 +1,13 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
-//import BlogList from './components/BlogList'
 import UsersTable from './components/UsersTable'
 import UserDetail from './components/UserDetail'
+import BlogDetail from './components/BlogDetail'
+import BlogsScreen from './components/BlogsScreen'
+import NavigationMenu from './components/NavigationMenu'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import userService from './services/users'
 import {
   getErrorMsgAction,
   getRemoveNotAction,
@@ -18,26 +19,21 @@ import {
   getRemoveUserAction,
   getSetUserAction
 } from './components/UserContext'
-import { useQuery } from '@tanstack/react-query'
-import { Routes, Route, useMatch } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
+import {
+  useAppState,
+  useMatchUserDetail,
+  useMatchBlogDetail
+} from './state/appState'
 
 const App = () => {
   const user = useUserState()
   const notDispatch = useNotificationDispatch()
   const userDispatch = useUserDispatch()
 
-  const usersQueryResult = useQuery({
-    queryFn: userService.getAll,
-    queryKey: ['users']
-  })
-
-  const match = useMatch('/users/:id')
-  const userToShowDetails =
-    match && !usersQueryResult.isLoading
-      ? usersQueryResult.data.find(u => u.id === match.params.id)
-      : null
-
-  //const users = usersQueryResult.isLoading ? null : usersQueryResult.data
+  const appState = useAppState()
+  const userToShowDetails = useMatchUserDetail()
+  const blogToShowDetails = useMatchBlogDetail()
 
   useEffect(() => {
     const userLoggedIn = window.localStorage.getItem('loggedBlogAppUser')
@@ -70,33 +66,47 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
-        <h2>Log in to application</h2>
+      <div className="body container login-container">
         <Notification />
-        <LoginForm login={handleLogin} />
+        <div className="d-flex login-container">
+          <LoginForm login={handleLogin} />
+        </div>
       </div>
     )
   }
 
   return (
-    <div>
-      <h2>blogs</h2>
+    <div className="body container p-2">
       <Notification />
-      <div>
-        <div>{user.username} logged in</div>
-        <br />
-        <button onClick={handleLogout}>logout</button>
+      <div className="bg-secondary mt-2 px-2">
+        <ul className="list-inline">
+          <li className="list-inline-item">
+            <NavigationMenu />
+          </li>
+          <li className="list-inline-item">
+            <div>{user.username} logged in</div>
+          </li>
+          <li className="list-inline-item">
+            <button onClick={handleLogout}>logout</button>
+          </li>
+        </ul>
       </div>
+      <h2>blog app</h2>
 
       <Routes>
-        <Route path="/" element={<UsersTable result={usersQueryResult} />} />
+        <Route path="/" element={<BlogsScreen />} />
+        <Route path="/blogs" element={<BlogsScreen />} />
         <Route
-          path="/users/:id"
-          element={<UserDetail user={userToShowDetails} />}
+          path="/blogs/:id"
+          element={<BlogDetail blog={blogToShowDetails} />}
         />
         <Route
           path="/users"
-          element={<UsersTable result={usersQueryResult} />}
+          element={<UsersTable result={appState.usersQuery} />}
+        />
+        <Route
+          path="/users/:id"
+          element={<UserDetail user={userToShowDetails} />}
         />
       </Routes>
     </div>
