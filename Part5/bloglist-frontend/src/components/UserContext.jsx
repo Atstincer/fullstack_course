@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useReduer } from 'react'
+import { createContext, useContext, useReducer } from 'react'
 
 const UserContext = createContext()
 
