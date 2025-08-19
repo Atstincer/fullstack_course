@@ -17,3 +17,16 @@
   padding: 10px;
   margin-bottom: 20px;
 }
+
+.users-table {
+  max-width: fit-content;
+}
+
+.login-form {
+  max-width: fit-content;
+  max-height: fit-content;
+}
+
+.login-container {
+  min-height: 350px;
+}
