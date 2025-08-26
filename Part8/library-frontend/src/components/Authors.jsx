@@ -1,12 +1,18 @@
 import PropTypes from 'prop-types'
+import { useState } from 'react'
+import AuthorEditForm from './AuthorEditForm'
 
 const Authors = ({ show, response }) => {
+  const [authorToEdit, setAuthorToEdit] = useState(null)
+
   if (!show) {
     return null
   }
   if (response.loading) {
     return <div>loading</div>
   }
+
+  const handleOnEditSuccess = () => setAuthorToEdit(null)
 
   const authors = response.data.allAuthors
 
@@ -22,13 +28,16 @@ const Authors = ({ show, response }) => {
           </tr>
           {authors.map((a) => (
             <tr key={a.name}>
-              <td>{a.name}</td>
+              <td onClick={() => setAuthorToEdit(a)}>
+                <a href="#">{a.name}</a>
+              </td>
               <td>{a.born}</td>
               <td>{a.bookCount}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      <AuthorEditForm author={authorToEdit} onSuccess={handleOnEditSuccess} />
     </div>
   )
 }
