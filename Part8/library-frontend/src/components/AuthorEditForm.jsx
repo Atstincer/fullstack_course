@@ -2,9 +2,15 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client/react'
 import { ALL_AUTHORS, EDIT_BIRTHYEAR } from '../querys'
+import Select from 'react-select'
 
-const AuthorEditForm = ({ author, onSuccess }) => {
+const AuthorEditForm = ({ authors }) => {
+  const [optionSelected, setOptionSelected] = useState(null)
   const [year, setYear] = useState('')
+
+  const options = authors.map((a) => ({ value: a, label: a.name }))
+
+  //console.log('options', options)
 
   const [addBirthYear] = useMutation(EDIT_BIRTHYEAR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
@@ -12,31 +18,35 @@ const AuthorEditForm = ({ author, onSuccess }) => {
   })
 
   useEffect(() => {
-    author ? setYear(author.born ? author.born : '') : setYear('')
-  }, [author])
+    optionSelected
+      ? setYear(optionSelected.value.born ? optionSelected.value.born : '')
+      : setYear('')
+  }, [optionSelected])
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    console.log('submitting...')
-    if (author)
+    //console.log('submitting...')
+    if (optionSelected)
       addBirthYear({
         variables: {
-          name: author.name,
+          name: optionSelected.value.name,
           setBornTo: year === '' ? null : parseInt(year),
         },
       })
-    onSuccess()
+    setOptionSelected(null)
   }
 
   return (
     <div>
       <h4>Set birthyear</h4>
       <form onSubmit={handleSubmit}>
-        <div>
-          name
-          <input value={author ? author.name : ''} readOnly />
-        </div>
-        <div>
+        <Select
+          value={optionSelected}
+          styles={{ control: (base) => ({ ...base, marginBottom: 10 }) }}
+          options={options}
+          onChange={setOptionSelected}
+        />
+        <div style={{ marginBottom: 10 }}>
           born
           <input
             value={year}
@@ -50,8 +60,7 @@ const AuthorEditForm = ({ author, onSuccess }) => {
 }
 
 AuthorEditForm.propTypes = {
-  author: PropTypes.object,
-  onSuccess: PropTypes.func,
+  authors: PropTypes.array,
 }
 
 export default AuthorEditForm
