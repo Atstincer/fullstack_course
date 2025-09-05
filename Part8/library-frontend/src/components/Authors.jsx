@@ -12,20 +12,20 @@ const Authors = ({ show, response }) => {
   const authors = response.data.allAuthors
 
   return (
-    <div>
+    <div className="mt-2">
       <h2>authors</h2>
       <table>
         <tbody>
           <tr>
             <th></th>
-            <th>born</th>
-            <th>books</th>
+            <th className="ps-2">born</th>
+            <th className="ps-2">books</th>
           </tr>
           {authors.map((a) => (
             <tr key={a.name}>
               <td>{a.name}</td>
-              <td>{a.born}</td>
-              <td>{a.bookCount}</td>
+              <td className="ps-2">{a.born}</td>
+              <td className="text-center">{a.bookCount}</td>
             </tr>
           ))}
         </tbody>

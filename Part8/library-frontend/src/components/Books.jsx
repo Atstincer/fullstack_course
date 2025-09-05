@@ -11,22 +11,25 @@ const Books = ({ show, response }) => {
 
   const books = response.data.allBooks
 
-  return (
-    <div>
-      <h2>books</h2>
+  if (!books || books.length === 0) {
+    return <div className="mt-3">no books added yet</div>
+  }
 
+  return (
+    <div className="mt-3">
+      <h2>books</h2>
       <table>
         <tbody>
           <tr>
             <th></th>
-            <th>author</th>
-            <th>published</th>
+            <th className="ps-3">author</th>
+            <th className="ps-2">published</th>
           </tr>
           {books.map((b) => (
             <tr key={b.title}>
               <td>{b.title}</td>
-              <td>{b.author.name}</td>
-              <td>{b.published}</td>
+              <td className="ps-3">{b.author.name}</td>
+              <td className="ps-2 text-center">{b.published}</td>
             </tr>
           ))}
         </tbody>

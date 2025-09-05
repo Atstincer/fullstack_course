@@ -7,6 +7,11 @@ import Select from 'react-select'
 const AuthorEditForm = ({ authors }) => {
   const [optionSelected, setOptionSelected] = useState(null)
   const [year, setYear] = useState('')
+  const [show, setShow] = useState(null)
+
+  useEffect(() => {
+    localStorage.getItem('login_user_token') ? setShow(true) : setShow(false)
+  }, [])
 
   const options = authors.map((a) => ({ value: a, label: a.name }))
 
@@ -36,8 +41,10 @@ const AuthorEditForm = ({ authors }) => {
     setOptionSelected(null)
   }
 
+  if (!show) return null
+
   return (
-    <div>
+    <div className="mt-3">
       <h4>Set birthyear</h4>
       <form onSubmit={handleSubmit}>
         <Select
@@ -49,6 +56,7 @@ const AuthorEditForm = ({ authors }) => {
         <div style={{ marginBottom: 10 }}>
           born
           <input
+            className="ms-2"
             value={year}
             onChange={({ target }) => setYear(target.value)}
           />
