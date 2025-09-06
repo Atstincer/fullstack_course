@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/client/react'
 import { ALL_BOOKS, ALL_GENRES } from '../querys'
 import { useEffect, useState } from 'react'
+import BooksTable from './BooksTable'
 
 const Books = ({ show }) => {
   const [genres, setGenres] = useState(null)
@@ -50,22 +51,7 @@ const Books = ({ show }) => {
           in genre <b>{genreFilter}</b>
         </div>
       )}
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th className="ps-3">author</th>
-            <th className="ps-2">published</th>
-          </tr>
-          {books.map((b) => (
-            <tr key={b.title}>
-              <td>{b.title}</td>
-              <td className="ps-3">{b.author.name}</td>
-              <td className="ps-2 text-center">{b.published}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <BooksTable books={books} />
       <div className="mt-3">
         {genres
           ? genres.map((g) => (

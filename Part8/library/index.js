@@ -114,6 +114,7 @@ const typeDefs = `
     username: String!
     favoriteGenre: String!
     id: ID!
+    recommend: [Book!]
   }
 
   type Token {
@@ -200,6 +201,14 @@ const resolvers = {
     bookCount: async (root) => {
       const libros = await Book.find({ author: root.id })
       return libros ? libros.length : 0
+    },
+  },
+
+  User: {
+    recommend: async (root, args, { currentUser }) => {
+      if (!currentUser) return null
+      //console.log('currentUser', currentUser)
+      return Book.find({ genres: currentUser.favoriteGenre }).populate('author')
     },
   },
 
