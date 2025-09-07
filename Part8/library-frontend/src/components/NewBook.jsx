@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useMutation } from '@apollo/client/react'
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../querys'
+import { ALL_AUTHORS, ALL_GENRES, CREATE_BOOK, ME } from '../querys'
 
 const NewBook = ({ show }) => {
   const [title, setTitle] = useState('')
@@ -11,7 +11,7 @@ const NewBook = ({ show }) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    refetchQueries: [ALL_AUTHORS, ALL_GENRES, ME], //{ query: ALL_BOOKS }, { query: ALL_AUTHORS }, { query: ALL_GENRES },
     onError: (error) => {
       console.log(error)
     },

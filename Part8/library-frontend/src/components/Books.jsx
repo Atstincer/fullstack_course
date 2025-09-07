@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/client/react'
-import { ALL_BOOKS, ALL_GENRES } from '../querys'
+import { ALL_GENRES, ALL_BOOKS } from '../querys'
 import { useEffect, useState } from 'react'
 import BooksTable from './BooksTable'
 
@@ -10,9 +10,10 @@ const Books = ({ show }) => {
 
   const booksToShowQuery = useQuery(ALL_BOOKS, {
     variables: {
-      genre: genreFilter === 'all genres' ? null : genreFilter,
+      genre: genreFilter,
     },
     skip: !show,
+    fetchPolicy: 'no-cache',
   })
 
   const allGenresQuery = useQuery(ALL_GENRES, {

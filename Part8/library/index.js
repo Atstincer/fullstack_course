@@ -181,7 +181,8 @@ const resolvers = {
           return []
         }
       }
-      if (args.genre) {
+      //console.log('args.genre', args.genre)
+      if (args.genre && args.genre !== 'all genres') {
         query.genres = args.genre
       }
       return Book.find(query).populate('author')

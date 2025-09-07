@@ -19,10 +19,14 @@ const RecommendBooks = ({ show }) => {
   return (
     <div className="my-3">
       <h4>Recommendations</h4>
-      <div className="my-2">
+      <div className="mt-3 mb-1">
         books in your favorite genre <b>{meQuery.data.me.favoriteGenre}</b>
       </div>
-      <BooksTable books={meQuery.data.me.recommend} />
+      {meQuery.data.me.recommend.length > 0 ? (
+        <BooksTable books={meQuery.data.me.recommend} />
+      ) : (
+        <div>No recomendations found</div>
+      )}
     </div>
   )
 }
