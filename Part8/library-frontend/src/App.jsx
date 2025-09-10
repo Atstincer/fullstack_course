@@ -1,17 +1,24 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client/react'
+import { useQuery, useSubscription } from '@apollo/client/react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import RecommendBooks from './components/RecommendBooks'
 import Login from './components/Login'
-import { ALL_AUTHORS } from './querys'
+import { ALL_AUTHORS, BOOK_ADDED } from './querys'
 
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
 
   const response_authors = useQuery(ALL_AUTHORS, { skip: page !== 'authors' })
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      console.log('data', data)
+      window.alert(`New book added: ${data.data.bookAdded.title}`)
+    },
+  })
 
   useEffect(() => {
     if (localStorage.getItem('login_user_token')) {
