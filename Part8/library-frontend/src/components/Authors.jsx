@@ -14,23 +14,29 @@ const Authors = ({ show, response }) => {
   return (
     <div className="mt-2">
       <h2>authors</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th className="ps-2">born</th>
-            <th className="ps-2">books</th>
-          </tr>
-          {authors.map((a) => (
-            <tr key={a.name}>
-              <td>{a.name}</td>
-              <td className="ps-2">{a.born}</td>
-              <td className="text-center">{a.bookCount}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <AuthorEditForm authors={authors} />
+      {authors && authors.length > 0 ? (
+        <div>
+          <table>
+            <tbody>
+              <tr>
+                <th></th>
+                <th className="ps-2">born</th>
+                <th className="ps-2">books</th>
+              </tr>
+              {authors.map((a) => (
+                <tr key={a.name}>
+                  <td>{a.name}</td>
+                  <td className="ps-2">{a.born}</td>
+                  <td className="text-center">{a.bookCount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <AuthorEditForm authors={authors} />
+        </div>
+      ) : (
+        <div>there are no authors registered</div>
+      )}
     </div>
   )
 }

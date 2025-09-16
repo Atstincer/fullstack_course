@@ -13,7 +13,7 @@ const Books = ({ show }) => {
       genre: genreFilter,
     },
     skip: !show,
-    fetchPolicy: 'no-cache',
+    //fetchPolicy: 'no-cache',
   })
 
   const allGenresQuery = useQuery(ALL_GENRES, {

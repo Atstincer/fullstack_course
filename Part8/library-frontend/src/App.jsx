@@ -14,7 +14,7 @@ const App = () => {
   const response_authors = useQuery(ALL_AUTHORS, { skip: page !== 'authors' })
 
   useSubscription(BOOK_ADDED, {
-    onData: ({ data }) => {
+    onData: ({ data, client }) => {
       console.log('data', data)
       window.alert(`New book added: ${data.data.bookAdded.title}`)
     },
