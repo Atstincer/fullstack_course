@@ -6,6 +6,7 @@ import NewBook from './components/NewBook'
 import RecommendBooks from './components/RecommendBooks'
 import Login from './components/Login'
 import { ALL_AUTHORS, BOOK_ADDED } from './querys'
+import { udQueries } from './util'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -15,8 +16,9 @@ const App = () => {
 
   useSubscription(BOOK_ADDED, {
     onData: ({ data, client }) => {
-      console.log('data', data)
-      window.alert(`New book added: ${data.data.bookAdded.title}`)
+      console.log('data received on subscription', data)
+      //window.alert(`New book added: ${data.data.bookAdded.title}`)
+      udQueries(client.cache, data.data.bookAdded)
     },
   })
 
