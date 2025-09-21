@@ -16,7 +16,7 @@ const App = () => {
 
   useSubscription(BOOK_ADDED, {
     onData: ({ data, client }) => {
-      console.log('data received on subscription', data)
+      //console.log('data received on subscription', data)
       //window.alert(`New book added: ${data.data.bookAdded.title}`)
       udQueries(client.cache, data.data.bookAdded)
     },

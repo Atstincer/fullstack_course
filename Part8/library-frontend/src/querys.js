@@ -5,7 +5,9 @@ const AUTHOR_DETAILS = gql`
     id
     name
     born
-    bookCount
+    books {
+      title
+    }
   }
 `
 
@@ -14,12 +16,13 @@ const BOOK_DETAILS = gql`
     id
     title
     author {
-      ...AuthorDetails
+      id
+      name
+      born
     }
     published
     genres
   }
-  ${AUTHOR_DETAILS}
 `
 
 export const ALL_AUTHORS = gql`

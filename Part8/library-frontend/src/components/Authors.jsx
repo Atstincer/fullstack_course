@@ -11,6 +11,8 @@ const Authors = ({ show, response }) => {
 
   const authors = response.data.allAuthors
 
+  //console.log('authors in Authors', authors)
+
   return (
     <div className="mt-2">
       <h2>authors</h2>
@@ -27,7 +29,7 @@ const Authors = ({ show, response }) => {
                 <tr key={a.name}>
                   <td>{a.name}</td>
                   <td className="ps-2">{a.born}</td>
-                  <td className="text-center">{a.bookCount}</td>
+                  <td className="text-center">{a.books.length}</td>
                 </tr>
               ))}
             </tbody>

@@ -22,7 +22,7 @@ const typeDefs = `
     name: String!
     id: ID!
     born: Int
-    bookCount: Int!
+    books: [Book]!
   }
 
   type Query {

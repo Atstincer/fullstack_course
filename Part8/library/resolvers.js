@@ -27,7 +27,7 @@ const resolvers = {
       }
       return Book.find(query).populate('author')
     },
-    allAuthors: async () => Author.find({}),
+    allAuthors: async () => Author.find({}).populate('books'),
     me: (root, args, context) => {
       return context.currentUser
     },
@@ -38,12 +38,12 @@ const resolvers = {
     },
   },
 
-  Author: {
+  /*Author: {
     bookCount: async (root) => {
       const libros = await Book.find({ author: root.id })
       return libros ? libros.length : 0
     },
-  },
+  },*/
 
   User: {
     recommend: async (root, args, { currentUser }) => {
@@ -58,7 +58,9 @@ const resolvers = {
       if (!currentUser) {
         throw new GraphQLError('Unothorize action, no user log in')
       }
-      const authorFound = await Author.findOne({ name: args.author })
+      const authorFound = await Author.findOne({ name: args.author }).populate(
+        'books'
+      )
       let authorId
       if (authorFound) {
         authorId = authorFound._id
@@ -80,6 +82,10 @@ const resolvers = {
       const newBook = new Book({ ...args, author: authorId })
       try {
         await newBook.save()
+
+        const finalAuthor = await Author.findById(authorId)
+        finalAuthor.books.push(newBook._id)
+        await finalAuthor.save()
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
           extensions: {
@@ -94,13 +100,17 @@ const resolvers = {
 
       pubsub.publish('BOOK_ADDED', { bookAdded })
 
+      console.log('book added in backend', bookAdded)
+
       return bookAdded
     },
     editAuthor: async (root, args, { currentUser }) => {
       if (!currentUser) {
         throw new GraphQLError('Unothorize action, no user log in')
       }
-      const authorFound = await Author.findOne({ name: args.name })
+      const authorFound = await Author.findOne({ name: args.name }).populate(
+        'books'
+      )
       if (authorFound) {
         authorFound.born = args.setBornTo
         await authorFound.save()
