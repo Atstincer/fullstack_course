@@ -1,0 +1,17 @@
+{
+  "name": "1-7",
+  "version": "1.0.0",
+  "description": "My first Typescript project",
+  "license": "ISC",
+  "author": "ats",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "bmi": "ts-node bmiCalculator.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
