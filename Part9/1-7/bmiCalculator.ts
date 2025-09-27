@@ -1,9 +1,9 @@
-interface Values {
+interface CalculatorValues {
   height: number;
   weight: number;
 }
 
-const getValidArgs = (args: string[]): Values => {
+const getValidArgs = (args: string[]): CalculatorValues => {
   if (args.length < 4) throw new Error("No enough arguments");
   if (args.length > 4) throw new Error("Too many arguments");
 
