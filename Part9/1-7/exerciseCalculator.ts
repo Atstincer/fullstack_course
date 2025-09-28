@@ -29,7 +29,7 @@ const getValidValues = (args: string[]): ExerciseValues => {
   };
 };
 
-const calculateExercises = (): TrainingEval => {
+const calculateExercises = (): TrainingEval | undefined => {
   try {
     const { target, training } = getValidValues(process.argv);
 
@@ -65,6 +65,7 @@ const calculateExercises = (): TrainingEval => {
       msg += "...Error: " + error.message;
     }
     console.log(msg);
+    return undefined;
   }
 };
 
