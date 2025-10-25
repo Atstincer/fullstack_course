@@ -5,68 +5,87 @@ interface TrainingEval {
   trainingDays: number;
   success: boolean;
   rating: Rating;
-  ratingDescription: String;
+  ratingDescription: string;
   target: number;
   average: number;
 }
 
-interface ExerciseValues {
+export interface ExerciseValues {
   target: number;
-  training: number[];
+  daily_exercises: number[];
 }
 
-const getValidValues = (args: string[]): ExerciseValues => {
+const getValidValuesCMD = (args: string[]): ExerciseValues => {
   if (args.length <= 3) throw new Error("No enough argumentgs");
   if (isNaN(Number(args[2]))) throw new Error("No valid arguments");
-  let training: number[] = [];
+  const daily_exercises: number[] = [];
   for (let x = 3; x < args.length; x++) {
     if (isNaN(Number(args[x]))) throw new Error("No valid arguments");
-    training.push(Number(args[x]));
+    daily_exercises.push(Number(args[x]));
   }
   return {
     target: Number(args[2]),
-    training,
+    daily_exercises,
   };
 };
 
-const calculateExercises = (): TrainingEval | undefined => {
+const calculateExercises = ({
+  target,
+  daily_exercises,
+}: ExerciseValues): TrainingEval => {
+  const trainingDays = daily_exercises.reduce((sum, v) => {
+    return v > 0 ? sum + 1 : sum;
+  }, 0);
+
+  const totalHoursTraining = daily_exercises.reduce((sum, v) => {
+    return sum + v;
+  }, 0);
+
+  const average = totalHoursTraining / daily_exercises.length;
+
+  const rating = average >= target ? 3 : average > target / 2 ? 2 : 1;
+
+  return {
+    periodLength: daily_exercises.length,
+    trainingDays,
+    success: average >= target,
+    rating,
+    ratingDescription:
+      rating === 3
+        ? "very goog"
+        : rating === 2
+        ? "it could be better"
+        : "you need to focus more",
+    target,
+    average,
+  };
+};
+
+const getErrorMessage = (error: unknown): string => {
+  let msg = "Somthing went wrong";
+  if (error instanceof Error) {
+    msg += "...Error: " + error.message;
+  }
+  return msg;
+};
+
+const calculateExercisesFromCMD = (): TrainingEval | undefined => {
   try {
-    const { target, training } = getValidValues(process.argv);
-
-    const trainingDays = training.reduce((sum, v) => {
-      return v > 0 ? sum + 1 : sum;
-    }, 0);
-
-    const totalHoursTraining = training.reduce((sum, v) => {
-      return sum + v;
-    }, 0);
-
-    const average = totalHoursTraining / training.length;
-
-    const rating = average >= target ? 3 : average > target / 2 ? 2 : 1;
-
-    return {
-      periodLength: training.length,
-      trainingDays,
-      success: average >= target,
-      rating,
-      ratingDescription:
-        rating === 3
-          ? "very goog"
-          : rating === 2
-          ? "it could be better"
-          : "you need to focus more",
-      target,
-      average,
-    };
+    const values = getValidValuesCMD(process.argv);
+    return calculateExercises(values);
   } catch (error: unknown) {
-    let msg = "Somthing went wrong";
-    if (error instanceof Error) {
-      msg += "...Error: " + error.message;
-    }
-    console.log(msg);
+    console.log(getErrorMessage(error));
     return undefined;
   }
 };
 
-console.log(calculateExercises());
+export const calculateExercisesFromEndPoint = (
+  target: number,
+  daily_exercises: number[]
+): TrainingEval => {
+  return calculateExercises({ target, daily_exercises });
+};
+
+if (require.main === module) {
+  console.log(calculateExercisesFromCMD());
+}
