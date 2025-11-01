@@ -1,4 +1,4 @@
-import { NewPatient } from "./types";
+import { NewPatient, Gender } from "./types";
 
 const isString = (str: unknown): str is string => {
   return typeof str === "string" || str instanceof String;
@@ -29,8 +29,14 @@ const parseSsn = (arg: unknown): string => {
   return arg;
 };
 
-const parseGender = (arg: unknown): string => {
-  if (!arg || !isString(arg)) {
+const isGender = (arg: string): arg is Gender => {
+  return Object.values(Gender)
+    .map((g) => g.toString())
+    .includes(arg);
+};
+
+const parseGender = (arg: unknown): Gender => {
+  if (!arg || !isString(arg) || !isGender(arg)) {
     throw new Error("Malformated or missing gender");
   }
   return arg;
