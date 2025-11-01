@@ -1,0 +1,18 @@
+GET http://localhost:3001/api/ping
+
+###
+
+GET http://localhost:3001/api/patients
+
+###
+
+POST http://localhost:3001/api/patients
+content-type: application/json
+
+{
+  "name": "John Dou",
+  "dateOfBirth": "2000-01-01",
+  "ssn": "000000-000X",
+  "gender": "male",
+  "occupation": "Cantabria barrendero"
+}
