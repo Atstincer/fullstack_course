@@ -1,6 +1,6 @@
-import { NewPatient, Gender } from "./types";
+import { NewPatient, NewPatientSchema } from "./types";
 
-const isString = (str: unknown): str is string => {
+/*const isString = (str: unknown): str is string => {
   return typeof str === "string" || str instanceof String;
 };
 
@@ -47,7 +47,7 @@ const parseOccupation = (arg: unknown): string => {
     throw new Error("Malformated or missing occupation");
   }
   return arg;
-};
+};*/
 
 export const getNewPatient = (obj: unknown): NewPatient => {
   if (!obj || typeof obj !== "object") {
@@ -60,13 +60,7 @@ export const getNewPatient = (obj: unknown): NewPatient => {
     "gender" in obj &&
     "occupation" in obj
   ) {
-    return {
-      name: parseName(obj.name),
-      dateOfBirth: parseDate(obj.dateOfBirth),
-      ssn: parseSsn(obj.ssn),
-      gender: parseGender(obj.gender),
-      occupation: parseOccupation(obj.occupation),
-    };
+    return NewPatientSchema.parse(obj);
   }
   throw new Error("Missing property");
 };

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface Diagnosis {
   code: string;
   name: string;
@@ -20,5 +22,13 @@ export interface Patient {
 }
 
 export type NewPatient = Omit<Patient, "id">;
+
+export const NewPatientSchema = z.object({
+  name: z.string(),
+  dateOfBirth: z.string().date(),
+  ssn: z.string(),
+  gender: z.nativeEnum(Gender),
+  occupation: z.string(),
+});
 
 export type PatientWithoutSsn = Omit<Patient, "ssn">;
