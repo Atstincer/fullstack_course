@@ -1,29 +1,46 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import patientService from "../services/patientService";
-import { getNewPatient } from "../utils";
 import { z } from "zod";
+import { NewPatient, NewPatientSchema } from "../types";
 
 const router = express.Router();
+
+const errorMiddleware = (
+  error: unknown,
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (error instanceof z.ZodError) {
+    res.status(400).send({ error: error.issues });
+  } else {
+    next(error);
+  }
+};
+
+const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
+  try {
+    NewPatientSchema.parse(req.body);
+    next();
+  } catch (error: unknown) {
+    next(error);
+  }
+};
 
 router.get("/", (_req, res) => {
   //res.send(patientService.getPatientsData());
   res.send(patientService.getPatientsWithoutSsn());
 });
 
-router.post("/", (req, res) => {
-  try {
-    const newPatient = getNewPatient(req.body);
-    const patientAdded = patientService.addNewPatient(newPatient);
+router.post(
+  "/",
+  newPatientParser,
+  (req: Request<unknown, unknown, NewPatient>, res: Response<NewPatient>) => {
+    const patientAdded = patientService.addNewPatient(req.body);
     res.json(patientAdded);
-  } catch (error: unknown) {
-    let msj = "Something went wrong.";
-    if (error instanceof z.ZodError) {
-      res.status(400).send({ error: error.issues });
-    } else if (error instanceof Error) {
-      msj += ".." + error.message;
-    }
-    res.status(400).send(msj);
   }
-});
+);
+
+router.use(errorMiddleware);
 
 export default router;
