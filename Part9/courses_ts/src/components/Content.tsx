@@ -1,15 +1,12 @@
 import type { ContentProps } from "../types";
+import Part from "./Part";
 
 const Content = (props: ContentProps) => {
   const courseParts = props.courseParts;
   return (
     <div>
       {courseParts.map((part, index) => {
-        return (
-          <p key={index}>
-            {part.name} {part.exerciseCount}
-          </p>
-        );
+        return <Part part={part} key={index} />;
       })}
     </div>
   );
