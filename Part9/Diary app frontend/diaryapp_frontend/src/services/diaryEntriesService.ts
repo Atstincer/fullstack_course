@@ -1,13 +1,19 @@
 import axios from "axios";
-import type { DiaryEntry } from "../types";
+import type { DiaryEntry, NewDiaryEntry } from "../types";
 
-const baseURL = "http://localhost:3000/";
+const baseURL = "http://localhost:3000/api/diaries";
 
 const getDiaryEntries = () => {
-  return axios.get<DiaryEntry[]>(baseURL + "api/diaries").then((response) => {
+  return axios.get<DiaryEntry[]>(baseURL).then((response) => {
     //console.log("response.data in diaryEntriesService: ", response.data);
     return response.data;
   });
 };
 
-export { getDiaryEntries };
+const addNewDiaryEntry = (newDiaryEntry: NewDiaryEntry) => {
+  return axios
+    .post<DiaryEntry>(baseURL, newDiaryEntry)
+    .then((response) => response.data);
+};
+
+export { getDiaryEntries, addNewDiaryEntry };

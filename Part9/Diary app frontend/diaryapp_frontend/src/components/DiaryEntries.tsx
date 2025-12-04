@@ -1,17 +1,7 @@
-import { useState, useEffect } from "react";
-import { getDiaryEntries } from "../services/diaryEntriesService";
-import type { DiaryEntry } from "../types";
+import type { DiaryEntriesProps } from "../types";
 
-const DiaryEntries = () => {
-  const [entries, setEntries] = useState<DiaryEntry[]>([]);
-
-  useEffect(() => {
-    getDiaryEntries().then((data) => {
-      console.log("response.data in component", data);
-      setEntries(data);
-    });
-  }, []);
-
+const DiaryEntries = (props: DiaryEntriesProps) => {
+  const entries = props.entries;
   return (
     <div>
       <h1>Diary entries</h1>

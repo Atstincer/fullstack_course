@@ -7,3 +7,13 @@ export interface DiaryEntry {
   weather: Weather;
   visibility: Visibility;
 }
+
+export type NewDiaryEntry = Omit<DiaryEntry, "id">;
+
+export interface DiaryEntriesProps {
+  entries: DiaryEntry[];
+}
+
+export interface NewDiaryEntryFormProps {
+  onEntryAdded: (entryAdded: DiaryEntry) => void;
+}
