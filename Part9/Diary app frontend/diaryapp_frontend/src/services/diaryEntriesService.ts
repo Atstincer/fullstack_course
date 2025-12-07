@@ -10,10 +10,9 @@ const getDiaryEntries = () => {
   });
 };
 
-const addNewDiaryEntry = (newDiaryEntry: NewDiaryEntry) => {
-  return axios
-    .post<DiaryEntry>(baseURL, newDiaryEntry)
-    .then((response) => response.data);
+const addNewDiaryEntry = async (newDiaryEntry: NewDiaryEntry) => {
+  const response = await axios.post<DiaryEntry>(baseURL, newDiaryEntry);
+  return response;
 };
 
 export { getDiaryEntries, addNewDiaryEntry };
