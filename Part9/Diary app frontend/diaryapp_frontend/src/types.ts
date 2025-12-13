@@ -1,5 +1,8 @@
-type Weather = "rainy" | "sonny" | "windy" | "cloudy";
-type Visibility = "good" | "poor";
+export const VISIBILITIES = ["good", "poor", "great", "ok"] as const;
+export const WEATHER = ["rainy", "sonny", "windy", "cloudy"] as const;
+
+export type Weather = (typeof WEATHER)[number];
+export type Visibility = (typeof VISIBILITIES)[number];
 
 export interface DiaryEntry {
   id: number;

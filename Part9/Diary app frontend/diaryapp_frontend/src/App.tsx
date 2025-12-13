@@ -9,7 +9,7 @@ const App = () => {
 
   useEffect(() => {
     getDiaryEntries().then((data) => {
-      console.log("response.data in component", data);
+      //console.log("response.data in component", data);
       setEntries(data);
     });
   }, []);

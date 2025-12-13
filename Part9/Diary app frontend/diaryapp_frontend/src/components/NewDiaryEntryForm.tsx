@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { addNewDiaryEntry } from "../services/diaryEntriesService";
-import type { NewDiaryEntry, NewDiaryEntryFormProps } from "../types";
+import {
+  VISIBILITIES,
+  WEATHER,
+  type NewDiaryEntry,
+  type NewDiaryEntryFormProps,
+  type Visibility,
+  type Weather,
+} from "../types";
 import axios from "axios";
+import { getCurrentDate } from "../util";
 
 const NewDiaryEntryForm = (props: NewDiaryEntryFormProps) => {
-  const [date, setDate] = useState("");
-  const [visibility, setVisibility] = useState("");
-  const [weather, setweather] = useState("");
+  const [date, setDate] = useState(getCurrentDate());
+  const [visibility, setVisibility] = useState<Visibility>(VISIBILITIES[0]);
+  const [weather, setWeather] = useState<Weather>(WEATHER[0]);
   const [comment, setComment] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -18,7 +26,7 @@ const NewDiaryEntryForm = (props: NewDiaryEntryFormProps) => {
       weather,
       comment,
     } as NewDiaryEntry;
-    console.log("trying to add newEntry:", newEntry);
+    //console.log("trying to add newEntry:", newEntry);
     try {
       const response = await addNewDiaryEntry(newEntry);
       props.onEntryAdded(response.data);
@@ -44,29 +52,50 @@ const NewDiaryEntryForm = (props: NewDiaryEntryFormProps) => {
       <div>
         date:
         <input
+          type="date"
           value={date}
           onChange={(event) => {
             setDate(event.target.value);
           }}
         />
       </div>
+      {}
       <div>
         visibility:
-        <input
-          value={visibility}
-          onChange={(event) => {
-            setVisibility(event.target.value);
-          }}
-        />
+        {VISIBILITIES.map((v) => (
+          <span key={v}>
+            <input
+              type="radio"
+              name="visibility"
+              value={v}
+              id={v}
+              checked={visibility === v}
+              onChange={(event) => {
+                setVisibility(event.target.value as Visibility);
+              }}
+            />
+            <label htmlFor={v}>{v}</label>
+          </span>
+        ))}
       </div>
+
       <div>
         weather:
-        <input
-          value={weather}
-          onChange={(event) => {
-            setweather(event.target.value);
-          }}
-        />
+        {WEATHER.map((v) => (
+          <span key={v}>
+            <input
+              type="radio"
+              name="weather"
+              value={v}
+              id={v}
+              checked={weather === v}
+              onChange={(event) => {
+                setWeather(event.target.value as Weather);
+              }}
+            />
+            <label htmlFor={v}>{v}</label>
+          </span>
+        ))}
       </div>
       <div>
         comment:
