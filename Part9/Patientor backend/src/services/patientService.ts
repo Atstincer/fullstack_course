@@ -1,12 +1,12 @@
 import patientData from "../../data/patients";
-import { NewPatient, Patient, PatientWithoutSsn } from "../types";
+import { NewPatient, Patient, NonSensitivePatient } from "../types";
 import { v1 as uuid } from "uuid";
 
 const getPatientsData = (): Patient[] => {
   return patientData;
 };
 
-const getPatientsWithoutSsn = (): PatientWithoutSsn[] => {
+const getNonSensitivePatients = (): NonSensitivePatient[] => {
   return patientData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
@@ -22,4 +22,13 @@ const addNewPatient = (patient: NewPatient): Patient => {
   return newPatient;
 };
 
-export default { getPatientsData, getPatientsWithoutSsn, addNewPatient };
+const getPatientInfo = (id: string): Patient | undefined => {
+  return patientData.find((p) => p.id === id);
+};
+
+export default {
+  getPatientsData,
+  getNonSensitivePatients,
+  addNewPatient,
+  getPatientInfo,
+};

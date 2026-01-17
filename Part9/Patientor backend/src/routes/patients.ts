@@ -29,7 +29,14 @@ const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
 
 router.get("/", (_req, res) => {
   //res.send(patientService.getPatientsData());
-  res.send(patientService.getPatientsWithoutSsn());
+  res.send(patientService.getNonSensitivePatients());
+});
+
+router.get("/:id", (req, res) => {
+  //console.log(`trying to get some patient ${req.params.id} info`);
+  const patient = patientService.getPatientInfo(req.params.id);
+  if (patient) res.json(patient);
+  else res.status(404).send({ error: "Patient not found" });
 });
 
 router.post(
