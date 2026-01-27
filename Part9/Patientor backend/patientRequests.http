@@ -10,6 +10,21 @@ GET http://localhost:3001/api/patients/d2773822-f723-11e9-8f0b-362b9e155667
 
 ###
 
+//adding new en entry
+POST http://localhost:3001/api/patients/d2773822-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "description": "some description",
+  "date": "2026-01-27",
+  "specialist": "Danaily",
+  "diagnosisCodes": [0],
+  "type": "HealthCheck",
+  "healthCheckRating": 0 
+}
+
+###
+
 POST http://localhost:3001/api/patients
 content-type: application/json
 
@@ -20,3 +35,8 @@ content-type: application/json
   "gender": "male",
   "occupation": "Cantabria barrendero"
 }
+
+###
+//getting diagnosis
+
+GET http://localhost:3001/api/diagnoses
